@@ -10,13 +10,11 @@ const Searchbar = ({ onSubmit }) => {
   };
 
   return (
-    <header className="searchbar">
-      <form className="form" onSubmit={handleSubmit}>
-        <button type="submit" className="button">
-          <span className="button-label">Search</span>
-        </button>
+    <header className="Searchbar">
+      <form className="SearchForm" onSubmit={handleSubmit}>
+        <button type="submit" className="SearchForm-button"></button>
         <input
-          className="input"
+          className="SearchForm-input"
           type="text"
           autoComplete="off"
           autoFocus
@@ -32,17 +30,17 @@ const Searchbar = ({ onSubmit }) => {
 const ImageGalleryItem = ({ image, onImageClick }) => {
   return (
     <li
-      className="gallery-item"
+      className="ImageGalleryItem"
       onClick={() => onImageClick(image.largeImageURL)}
     >
-      <img src={image.webformatURL} alt="" />
+      <img className="ImageGalleryItem-image" src={image.webformatURL} alt="" />
     </li>
   );
 };
 
 const ImageGallery = ({ images, onImageClick }) => {
   return (
-    <ul className="gallery">
+    <ul className="ImageGallery">
       {images.map(image => (
         <ImageGalleryItem
           key={image.id}
@@ -56,7 +54,7 @@ const ImageGallery = ({ images, onImageClick }) => {
 
 const Button = ({ onLoadMore }) => {
   return (
-    <button type="button" className="load-more-button" onClick={onLoadMore}>
+    <button type="button" className="Button" onClick={onLoadMore}>
       Load more
     </button>
   );
@@ -84,8 +82,8 @@ const Modal = ({ image, onClose }) => {
   };
 
   return (
-    <div className="overlay" onClick={handleOverlayClick}>
-      <div className="modal">
+    <div className="Overlay" onClick={handleOverlayClick}>
+      <div className="Modal">
         <img src={image} alt="" />
       </div>
     </div>
@@ -137,7 +135,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="App">
       <Searchbar onSubmit={handleSearchSubmit} />
       <ImageGallery images={images} onImageClick={handleImageClick} />
       {isLoading && <Loader />}
@@ -150,6 +148,7 @@ const App = () => {
     </div>
   );
 };
+
 const Loader = () => {
   return (
     <div className="loader">
@@ -157,4 +156,5 @@ const Loader = () => {
     </div>
   );
 };
+
 export default App;
