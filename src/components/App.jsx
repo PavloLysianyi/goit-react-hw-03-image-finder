@@ -52,9 +52,14 @@ const ImageGallery = ({ images, onImageClick }) => {
   );
 };
 
-const Button = ({ onLoadMore }) => {
+const Button = ({ onLoadMore, hasMoreImages }) => {
   return (
-    <button type="button" className="Button" onClick={onLoadMore}>
+    <button
+      type="button"
+      className="Button"
+      onClick={onLoadMore}
+      style={{ display: hasMoreImages ? 'block' : 'none' }}
+    >
       Load more
     </button>
   );
@@ -90,17 +95,27 @@ const Modal = ({ image, onClose }) => {
   );
 };
 
+const Loader = () => {
+  return (
+    <div className="loader">
+      <Puff color="#00BFFF" height={100} width={100} />
+    </div>
+  );
+};
+
 const App = () => {
   const [images, setImages] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [selectedImage, setSelectedImage] = React.useState(null);
+  const [hasMoreImages, setHasMoreImages] = React.useState(true);
 
   const handleSearchSubmit = query => {
     setSearchQuery(query);
     setImages([]);
     setCurrentPage(1);
+    setHasMoreImages(true);
     fetchImages(query, 1);
   };
 
@@ -127,8 +142,12 @@ const App = () => {
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
-        setImages(prevImages => [...prevImages, ...data.hits]);
-        setCurrentPage(page);
+        if (data.hits.length === 0) {
+          setHasMoreImages(false);
+        } else {
+          setImages(prevImages => [...prevImages, ...data.hits]);
+          setCurrentPage(page);
+        }
       })
       .catch(error => console.error('Error fetching images:', error))
       .finally(() => setIsLoading(false));
@@ -140,19 +159,11 @@ const App = () => {
       <ImageGallery images={images} onImageClick={handleImageClick} />
       {isLoading && <Loader />}
       {images.length > 0 && !isLoading && (
-        <Button onLoadMore={handleLoadMore} />
+        <Button onLoadMore={handleLoadMore} hasMoreImages={hasMoreImages} />
       )}
       {selectedImage && (
         <Modal image={selectedImage} onClose={handleCloseModal} />
       )}
-    </div>
-  );
-};
-
-const Loader = () => {
-  return (
-    <div className="loader">
-      <Puff color="#00BFFF" height={100} width={100} />
     </div>
   );
 };
