@@ -16,20 +16,29 @@ class App extends React.Component {
     hasMoreImages: false,
   };
 
-  handleSearchSubmit = query => {
-    this.setState({
-      searchQuery: query,
-      images: [],
-      currentPage: 1,
-      hasMoreImages: true,
-    });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.currentPage !== this.state.currentPage) {
+      this.fetchImages();
+    }
+  }
 
-    this.fetchImages(query, 1);
+  handleSearchSubmit = query => {
+    this.setState(
+      {
+        searchQuery: query,
+        images: [],
+        currentPage: 1,
+      },
+      () => {
+        this.fetchImages();
+      }
+    );
   };
 
   handleLoadMore = () => {
-    const nextPage = this.state.currentPage + 1;
-    this.fetchImages(this.state.searchQuery, nextPage);
+    this.setState(prevState => ({
+      currentPage: prevState.currentPage + 1,
+    }));
   };
 
   handleImageClick = largeImageURL => {
@@ -40,14 +49,18 @@ class App extends React.Component {
     this.setState({ selectedImage: null });
   };
 
-  fetchImages = (query, page) => {
+  fetchImages = () => {
+    const { searchQuery, currentPage } = this.state;
+    if (!searchQuery) {
+      return;
+    }
+
     this.setState({ isLoading: true });
 
-    fetchImages(query, page)
+    fetchImages(searchQuery, currentPage)
       .then(({ images, hasMoreImages }) => {
         this.setState(prevState => ({
           images: [...prevState.images, ...images],
-          currentPage: page,
           hasMoreImages,
         }));
       })
@@ -55,18 +68,26 @@ class App extends React.Component {
   };
 
   render() {
-    const { images, isLoading, hasMoreImages, selectedImage } = this.state;
+    const { images, isLoading, hasMoreImages, selectedImage, searchQuery } =
+      this.state;
 
     return (
       <div className="App">
         <Searchbar onSubmit={this.handleSearchSubmit} />
-        <ImageGallery images={images} onImageClick={this.handleImageClick} />
-        {isLoading && <Loader />}
-        {images.length > 0 && !isLoading && (
-          <Button
-            onLoadMore={this.handleLoadMore}
-            hasMoreImages={hasMoreImages}
-          />
+        {searchQuery && (
+          <>
+            <ImageGallery
+              images={images}
+              onImageClick={this.handleImageClick}
+            />
+            {isLoading && <Loader />}
+            {images.length > 0 && !isLoading && (
+              <Button
+                onLoadMore={this.handleLoadMore}
+                hasMoreImages={hasMoreImages}
+              />
+            )}
+          </>
         )}
         {selectedImage && (
           <Modal image={selectedImage} onClose={this.handleCloseModal} />
