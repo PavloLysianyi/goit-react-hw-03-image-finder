@@ -2,12 +2,9 @@ import React from 'react';
 import { Puff } from 'react-loader-spinner';
 
 class Searchbar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      query: '',
-    };
-  }
+  state = {
+    query: '',
+  };
 
   handleSubmit = e => {
     e.preventDefault();
@@ -24,7 +21,7 @@ class Searchbar extends React.Component {
             type="text"
             autoComplete="off"
             autoFocus
-            placeholder="Search images and photos"
+            placeholder="Шукати зображення та фотографії"
             value={this.state.query}
             onChange={e => this.setState({ query: e.target.value })}
           />
@@ -34,71 +31,52 @@ class Searchbar extends React.Component {
   }
 }
 
-class ImageGalleryItem extends React.Component {
-  render() {
-    const { image, onImageClick } = this.props;
-    return (
-      <li
-        className="ImageGalleryItem"
-        onClick={() => onImageClick(image.largeImageURL)}
-      >
-        <img
-          className="ImageGalleryItem-image"
-          src={image.webformatURL}
-          alt=""
-        />
-      </li>
-    );
-  }
-}
+const ImageGalleryItem = ({ image, onImageClick }) => (
+  <li
+    className="ImageGalleryItem"
+    onClick={() => onImageClick(image.largeImageURL)}
+  >
+    <img className="ImageGalleryItem-image" src={image.webformatURL} alt="" />
+  </li>
+);
 
-class ImageGallery extends React.Component {
-  render() {
-    const { images, onImageClick } = this.props;
-    return (
-      <ul className="ImageGallery">
-        {images.map(image => (
-          <ImageGalleryItem
-            key={image.id}
-            image={image}
-            onImageClick={onImageClick}
-          />
-        ))}
-      </ul>
-    );
-  }
-}
+const ImageGallery = ({ images, onImageClick }) => (
+  <ul className="ImageGallery">
+    {images.map(image => (
+      <ImageGalleryItem
+        key={image.id}
+        image={image}
+        onImageClick={onImageClick}
+      />
+    ))}
+  </ul>
+);
 
-class Button extends React.Component {
-  render() {
-    const { onLoadMore, hasMoreImages } = this.props;
-    return (
-      <button
-        type="button"
-        className="Button"
-        onClick={onLoadMore}
-        style={{ display: hasMoreImages ? 'block' : 'none' }}
-      >
-        Load more
-      </button>
-    );
-  }
-}
+const Button = ({ onLoadMore, hasMoreImages }) => (
+  <button
+    type="button"
+    className="Button"
+    onClick={onLoadMore}
+    style={{ display: hasMoreImages ? 'block' : 'none' }}
+  >
+    Завантажити ще
+  </button>
+);
 
 class Modal extends React.Component {
   componentDidMount() {
-    this.handleKeyDown = e => {
-      if (e.code === 'Escape') {
-        this.props.onClose();
-      }
-    };
-
     window.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleKeyDown);
   }
+
+  handleKeyDown = e => {
+    if (e.code === 'Escape') {
+      this.props.onClose();
+    }
+  };
 
   handleOverlayClick = e => {
     if (e.target === e.currentTarget) {
@@ -117,28 +95,21 @@ class Modal extends React.Component {
   }
 }
 
-class Loader extends React.Component {
-  render() {
-    return (
-      <div className="loader">
-        <Puff color="#00BFFF" height={100} width={100} />
-      </div>
-    );
-  }
-}
+const Loader = () => (
+  <div className="loader">
+    <Puff color="#00BFFF" height={100} width={100} />
+  </div>
+);
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      images: [],
-      currentPage: 1,
-      searchQuery: '',
-      isLoading: false,
-      selectedImage: null,
-      hasMoreImages: true,
-    };
-  }
+  state = {
+    images: [],
+    currentPage: 1,
+    searchQuery: '',
+    isLoading: false,
+    selectedImage: null,
+    hasMoreImages: true,
+  };
 
   handleSearchSubmit = query => {
     this.setState({
