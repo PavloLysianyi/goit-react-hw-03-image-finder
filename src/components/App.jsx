@@ -108,7 +108,7 @@ class App extends React.Component {
     searchQuery: '',
     isLoading: false,
     selectedImage: null,
-    hasMoreImages: true,
+    hasMoreImages: false,
   };
 
   handleSearchSubmit = query => {
@@ -151,6 +151,7 @@ class App extends React.Component {
           this.setState(prevState => ({
             images: [...prevState.images, ...data.hits],
             currentPage: page,
+            hasMoreImages: page < Math.ceil(data.totalHits / perPage),
           }));
         }
       })
