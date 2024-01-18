@@ -17,22 +17,21 @@ class App extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.currentPage !== this.state.currentPage) {
+    if (
+      prevState.currentPage !== this.state.currentPage ||
+      prevState.searchQuery !== this.state.searchQuery
+    ) {
       this.fetchImages();
     }
   }
 
   handleSearchSubmit = query => {
-    this.setState(
-      {
-        searchQuery: query,
-        images: [],
-        currentPage: 1,
-      },
-      () => {
-        this.fetchImages();
-      }
-    );
+    this.setState({
+      searchQuery: query,
+      images: [],
+      currentPage: 1,
+    });
+    this.fetchImages();
   };
 
   handleLoadMore = () => {
