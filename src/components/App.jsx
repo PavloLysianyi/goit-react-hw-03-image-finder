@@ -26,12 +26,13 @@ class App extends React.Component {
   }
 
   handleSearchSubmit = query => {
-    this.setState({
-      searchQuery: query,
-      images: [],
-      currentPage: 1,
-    });
-    this.fetchImages();
+    if (query !== this.state.searchQuery) {
+      this.setState({
+        searchQuery: query,
+        images: [],
+        currentPage: 1,
+      });
+    }
   };
 
   handleLoadMore = () => {
